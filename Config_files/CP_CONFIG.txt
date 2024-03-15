@@ -1,0 +1,103 @@
+set groups bbe-bng-director bng-controller user-planes up1 transport inet Up_ip
+set groups bbe-bng-director bng-controller user-planes up1 user-plane-profile up-blr-prof
+set groups bbe-bng-director bng-controller control-plane-instances cp control-plane-config-group bbe-common-0
+set groups bbe-bng-director bng-controller control-plane-instances cp user-plane up1
+set groups bbe-common-0 system services dhcp-local-server dhcpv6 group v6server interface up:up1:pp0.0
+set groups bbe-common-0 access-profile Access-Profile-1
+set groups bbe-common-0 firewall family inet filter accept-all-v4 term all then accept
+set groups bbe-common-0 firewall family inet filter dwnstrm1-inet interface-specific
+set groups bbe-common-0 firewall family inet filter dwnstrm1-inet term t1 then service-accounting
+set groups bbe-common-0 firewall family inet filter upstrm1-inet interface-specific
+set groups bbe-common-0 firewall family inet filter upstrm1-inet term t1 then service-accounting
+set groups bbe-common-0 access radius-server 10.206.213.189 secret "$9$b-Y4ZzF/t0IqmIcyr8L"
+set groups bbe-common-0 access profile Access-Profile-1 authentication-order radius
+set groups bbe-common-0 access profile Access-Profile-1 radius authentication-server 10.206.213.189
+set groups bbe-common-0 access profile Access-Profile-1 radius accounting-server 10.206.213.189
+set groups bbe-common-0 access profile Access-Profile-1 accounting order radius
+set groups bbe-common-0 access profile Access-Profile-1 accounting statistics volume-time
+set groups bbe-common-0 access address-assignment pool v4pool family inet network 100.0.0.0/8
+set groups bbe-common-0 access address-assignment pool v4pool family inet range r1 low 100.16.0.1
+set groups bbe-common-0 access address-assignment pool v4pool family inet range r1 high 100.16.255.254
+set groups bbe-common-0 access address-assignment pool v4pool family inet dhcp-attributes maximum-lease-time 99999
+set groups bbe-common-0 access address-assignment pool v4pool family inet dhcp-attributes router 100.0.0.1
+set groups bbe-common-0 access address-assignment pool v6pool family inet6 prefix 1000::/48
+set groups bbe-common-0 access address-assignment pool v6pool family inet6 range r1 prefix-length 64
+set groups bbe-common-0 access address-assignment pool v6pool family inet6 dhcp-attributes maximum-lease-time 99999
+set groups bbe-common-0 user-plane-profiles up-blr-prof interfaces ge-0/0/1 auto-configure vlan-ranges dynamic-profile dynvlan-profile accept pppoe
+set groups bbe-common-0 user-plane-profiles up-blr-prof interfaces ge-0/0/1 auto-configure vlan-ranges dynamic-profile dynvlan-profile ranges 1-100
+set groups bbe-common-0 user-plane-profiles up-blr-prof interfaces ge-0/0/1 auto-configure remove-when-no-subscribers
+set groups bbe-common-0 dynamic-profiles dynsvlan-profile routing-instances "$junos-routing-instance" interface "$junos-interface-name"
+set groups bbe-common-0 dynamic-profiles dynsvlan-profile interfaces demux0 unit "$junos-interface-unit" demux-source inet
+set groups bbe-common-0 dynamic-profiles dynsvlan-profile interfaces demux0 unit "$junos-interface-unit" demux-source inet6
+set groups bbe-common-0 dynamic-profiles dynsvlan-profile interfaces demux0 unit "$junos-interface-unit" proxy-arp
+set groups bbe-common-0 dynamic-profiles dynsvlan-profile interfaces demux0 unit "$junos-interface-unit" vlan-tags outer "$junos-stacked-vlan-id"
+set groups bbe-common-0 dynamic-profiles dynsvlan-profile interfaces demux0 unit "$junos-interface-unit" vlan-tags inner "$junos-vlan-id"
+set groups bbe-common-0 dynamic-profiles dynsvlan-profile interfaces demux0 unit "$junos-interface-unit" family inet unnumbered-address "$junos-loopback-interface"
+set groups bbe-common-0 dynamic-profiles dynsvlan-profile interfaces demux0 unit "$junos-interface-unit" family inet6 unnumbered-address "$junos-loopback-interface"
+set groups bbe-common-0 dynamic-profiles dynsvlan-profile interfaces demux0 unit "$junos-interface-unit" family pppoe duplicate-protection
+set groups bbe-common-0 dynamic-profiles dynsvlan-profile interfaces demux0 unit "$junos-interface-unit" family pppoe dynamic-profile pppoe-client-profile
+set groups bbe-common-0 dynamic-profiles dynvlan-profile routing-instances "$junos-routing-instance" interface "$junos-interface-name"
+set groups bbe-common-0 dynamic-profiles dynvlan-profile interfaces demux0 unit "$junos-interface-unit" demux-source inet
+set groups bbe-common-0 dynamic-profiles dynvlan-profile interfaces demux0 unit "$junos-interface-unit" demux-source inet6
+set groups bbe-common-0 dynamic-profiles dynvlan-profile interfaces demux0 unit "$junos-interface-unit" proxy-arp
+set groups bbe-common-0 dynamic-profiles dynvlan-profile interfaces demux0 unit "$junos-interface-unit" vlan-id "$junos-vlan-id"
+set groups bbe-common-0 dynamic-profiles dynvlan-profile interfaces demux0 unit "$junos-interface-unit" family inet unnumbered-address "$junos-loopback-interface"
+set groups bbe-common-0 dynamic-profiles dynvlan-profile interfaces demux0 unit "$junos-interface-unit" family inet6 unnumbered-address "$junos-loopback-interface"
+set groups bbe-common-0 dynamic-profiles dynvlan-profile interfaces demux0 unit "$junos-interface-unit" family pppoe duplicate-protection
+set groups bbe-common-0 dynamic-profiles dynvlan-profile interfaces demux0 unit "$junos-interface-unit" family pppoe dynamic-profile pppoe-client-profile
+set groups bbe-common-0 dynamic-profiles ipdemux-profile routing-instances "$junos-routing-instance" interface "$junos-interface-name"
+set groups bbe-common-0 dynamic-profiles ipdemux-profile interfaces demux0 unit "$junos-interface-unit" demux-options underlying-interface "$junos-underlying-interface"
+set groups bbe-common-0 dynamic-profiles ipdemux-profile interfaces demux0 unit "$junos-interface-unit" family inet demux-source $junos-subscriber-ip-address
+set groups bbe-common-0 dynamic-profiles ipdemux-profile interfaces demux0 unit "$junos-interface-unit" family inet unnumbered-address "$junos-loopback-interface"
+set groups bbe-common-0 dynamic-profiles ipdemux-profile interfaces demux0 unit "$junos-interface-unit" family inet6 demux-source $junos-subscriber-ipv6-address
+set groups bbe-common-0 dynamic-profiles ipdemux-profile interfaces demux0 unit "$junos-interface-unit" family inet6 unnumbered-address "$junos-loopback-interface"
+set groups bbe-common-0 dynamic-profiles pppoe-client-profile routing-instances "$junos-routing-instance" interface "$junos-interface-name"
+set groups bbe-common-0 dynamic-profiles pppoe-client-profile interfaces pp0 unit "$junos-interface-unit" ppp-options chap
+set groups bbe-common-0 dynamic-profiles pppoe-client-profile interfaces pp0 unit "$junos-interface-unit" ppp-options pap
+set groups bbe-common-0 dynamic-profiles pppoe-client-profile interfaces pp0 unit "$junos-interface-unit" pppoe-options underlying-interface "$junos-underlying-interface"
+set groups bbe-common-0 dynamic-profiles pppoe-client-profile interfaces pp0 unit "$junos-interface-unit" pppoe-options server
+set groups bbe-common-0 dynamic-profiles pppoe-client-profile interfaces pp0 unit "$junos-interface-unit" no-keepalives
+set groups bbe-common-0 dynamic-profiles pppoe-client-profile interfaces pp0 unit "$junos-interface-unit" family inet unnumbered-address "$junos-loopback-interface"
+set groups bbe-common-0 dynamic-profiles pppoe-client-profile interfaces pp0 unit "$junos-interface-unit" family inet6 unnumbered-address "$junos-loopback-interface"
+set groups bbe-common-0 dynamic-profiles retail-profile routing-instances "$junos-routing-instance" interface "$junos-interface-name"
+set groups bbe-common-0 dynamic-profiles retail-profile interfaces demux0 unit "$junos-interface-unit" family inet
+set groups bbe-common-0 dynamic-profiles retail-profile interfaces demux0 unit "$junos-interface-unit" family inet6
+set groups bbe-common-0 dynamic-profiles svlandemux-profile routing-instances "$junos-routing-instance" interface "$junos-interface-name"
+set groups bbe-common-0 dynamic-profiles svlandemux-profile interfaces demux0 unit "$junos-interface-unit" demux-options underlying-interface "$junos-interface-ifd-name"
+set groups bbe-common-0 dynamic-profiles svlandemux-profile interfaces demux0 unit "$junos-interface-unit" family inet unnumbered-address "$junos-loopback-interface"
+set groups bbe-common-0 dynamic-profiles svlandemux-profile interfaces demux0 unit "$junos-interface-unit" family inet6 unnumbered-address "$junos-loopback-interface"
+set groups bbe-common-0 dynamic-profiles svlandemux-profile interfaces demux0 unit "$junos-interface-unit" family pppoe duplicate-protection
+set groups bbe-common-0 dynamic-profiles svlandemux-profile interfaces demux0 unit "$junos-interface-unit" family pppoe dynamic-profile pppoe-client-profile
+set groups bbe-common-0 dynamic-profiles vlandemux-profile routing-instances "$junos-routing-instance" interface "$junos-interface-name"
+set groups bbe-common-0 dynamic-profiles vlandemux-profile interfaces demux0 unit "$junos-interface-unit" demux-options underlying-interface "$junos-interface-ifd-name"
+set groups bbe-common-0 dynamic-profiles vlandemux-profile interfaces demux0 unit "$junos-interface-unit" family inet unnumbered-address "$junos-loopback-interface"
+set groups bbe-common-0 dynamic-profiles vlandemux-profile interfaces demux0 unit "$junos-interface-unit" family inet6 unnumbered-address "$junos-loopback-interface"
+set groups bbe-common-0 dynamic-profiles filter-service variables inputFilter default-value upstrm1-inet
+set groups bbe-common-0 dynamic-profiles filter-service variables outputFilter default-value dwnstrm1-inet
+set groups bbe-common-0 dynamic-profiles filter-service variables inputFilter6 default-value upstrm1-inet6
+set groups bbe-common-0 dynamic-profiles filter-service variables outputFilter6 default-value dwnstrm1-inet6
+set groups bbe-common-0 dynamic-profiles filter-service interfaces demux0 unit "$junos-interface-unit" family inet filter input "$inputFilter"
+set groups bbe-common-0 dynamic-profiles filter-service interfaces demux0 unit "$junos-interface-unit" family inet filter output "$outputFilter"
+set groups bbe-common-0 dynamic-profiles filter-service interfaces demux0 unit "$junos-interface-unit" family inet6 filter input "$inputFilter6"
+set groups bbe-common-0 dynamic-profiles filter-service interfaces demux0 unit "$junos-interface-unit" family inet6 filter output "$outputFilter6"
+set apply-groups bbe-bng-director
+set apply-groups bbe-common-0
+set system root-authentication encrypted-password "$6$lwye5$RyPtoSkdX9.X10sxPFt0lJ2g/A8EYU4vj26Lq6TsLH6yHOuytvVg93bJK05KC8GQI88Q..mCug7zGOmcaxIBd/"
+set system services netconf ssh
+set system services ssh root-login allow
+set system services extension-service request-response grpc clear-text port 50051
+set system services extension-service request-response grpc max-connections 8
+set system services extension-service request-response grpc skip-authentication
+set system services flow-tap-dtcp ssh
+set chassis network-services enhanced-ip
+set dynamic-profiles client-dhcp-demux interfaces demux0 unit "$junos-interface-unit" demux-options underlying-interface "$junos-underlying-interface"
+set dynamic-profiles client-dhcp-demux interfaces demux0 unit "$junos-interface-unit" family inet demux-source $junos-subscriber-ip-address
+set dynamic-profiles client-dhcp-demux interfaces demux0 unit "$junos-interface-unit" family inet unnumbered-address lo0.0
+set dynamic-profiles ppp-dp-pp0 interfaces pp0 unit "$junos-interface-unit" no-traps
+set dynamic-profiles ppp-dp-pp0 interfaces pp0 unit "$junos-interface-unit" ppp-options pap
+set dynamic-profiles ppp-dp-pp0 interfaces pp0 unit "$junos-interface-unit" pppoe-options underlying-interface "$junos-underlying-interface"
+set dynamic-profiles ppp-dp-pp0 interfaces pp0 unit "$junos-interface-unit" pppoe-options server
+set dynamic-profiles ppp-dp-pp0 interfaces pp0 unit "$junos-interface-unit" no-keepalives
+set dynamic-profiles ppp-dp-pp0 interfaces pp0 unit "$junos-interface-unit" family inet address 16.0.0.1/32
+set dynamic-profiles ppp-dp-pp0 interfaces pp0 unit "$junos-interface-unit" family inet6 address 1000:0::1/128
+deactivate bng-controller subscriber-groups

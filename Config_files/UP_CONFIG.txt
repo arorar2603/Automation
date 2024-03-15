@@ -1,0 +1,29 @@
+set system commit synchronize
+set system configuration-database max-db-size 314572800
+set system services subscriber-management overrides no-unsolicited-ra
+set system services subscriber-management enable force
+set system services subscriber-management mode user-plane user-plane-name up1
+set system services subscriber-management mode user-plane transport inet Up_ip
+set system services subscriber-management mode user-plane pfcp enable-tracing
+set system services subscriber-management mode user-plane control-plane control-plane-name cp
+set system ports console log-out-on-disconnect
+set chassis redundancy graceful-switchover
+set chassis aggregated-devices ethernet device-count 10
+set chassis network-services enhanced-ip
+set interfaces ge-0/0/1 description "To Spirent"
+set interfaces ge-0/0/1 flexible-vlan-tagging
+set interfaces ge-0/0/1 auto-configure vlan-ranges dynamic-profile dynvlan-profile accept pppoe
+set interfaces ge-0/0/1 auto-configure vlan-ranges dynamic-profile dynvlan-profile ranges 1-100
+set interfaces ge-0/0/1 auto-configure remove-when-no-subscribers
+set interfaces ge-0/0/2 unit 0 family inet address 202.0.0.4/24
+set interfaces lo0 unit 0 family inet address 192.168.1.10/32
+set interfaces lo0 unit 0 family inet6 address 192:168:1::10/128
+set access radius-server 10.206.213.189 secret "$9$eAAMLNUDkPT32439AtIR"
+set access profile default accounting-order radius
+set access profile default authentication-order radius
+set access profile default radius authentication-server 10.206.213.189
+set access profile default radius accounting-server 10.206.213.189
+set routing-options router-id 100.0.0.1
+set routing-options autonomous-system 65000
+set routing-options nonstop-routing
+set routing-options nsr-phantom-holdtime 600

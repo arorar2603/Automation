@@ -1,0 +1,2 @@
+cp-service-tcp 10.206.214.158
+cp-service-udp 10.206.214.158
